@@ -48,3 +48,42 @@ for i in dir_list:
         emotion.append('male_error')
     path.append(os.path.join(SAVEE, i))
 SAVEE_df = pd.DataFrame({'labels': emotion, 'source': 'SAVEE', 'path': path})
+
+# Process RAVDESS dataset
+dir_list = os.listdir(RAV)
+dir_list.sort()
+
+emotion = []
+gender = []
+path = []
+
+print("Processing RAVDESS files...")
+for f in dir_list:
+    file_path = os.path.join(RAV, f)
+    if os.path.isfile(file_path) and f.endswith('.wav'):
+        part = f.split('.')[0].split('_')
+        if len(part) == 4: 
+            try:
+                actor_id = int(part[0])
+                actor_gender = "female" if actor_id % 2 == 0 else "male"
+                emotion_code = part[2]
+
+                emotion_map = {
+                    "NEU": "neutral", "CAL": "calm", "HAP": "happy",
+                    "SAD": "sad", "ANG": "angry", "FEA": "fearful",
+                    "DIS": "disgust", "SUR": "surprised"
+                }
+
+                emotion_label = emotion_map.get(emotion_code, "Unknown")
+
+                gender.append(actor_gender)
+                emotion.append(f"{actor_gender}_{emotion_label}")
+                path.append(file_path)
+                print(f"Processed file: {file_path}")
+
+            except ValueError:
+                print(f"Skipping file due to parsing error: {f}")
+        else:
+            print(f"Skipping file due to unexpected filename format: {f}")
+
+RAV_df = pd.DataFrame({'labels': emotion, 'source': 'RAVDESS', 'path': path})
