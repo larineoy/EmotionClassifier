@@ -87,3 +87,31 @@ for f in dir_list:
             print(f"Skipping file due to unexpected filename format: {f}")
 
 RAV_df = pd.DataFrame({'labels': emotion, 'source': 'RAVDESS', 'path': path})
+
+# Process TESS dataset
+dir_list = os.listdir(TESS)
+dir_list.sort()
+path = []
+emotion = []
+for i in dir_list:
+    fname = os.listdir(os.path.join(TESS, i))
+    for f in fname:
+        if i.startswith('OAF_angry') or i.startswith('YAF_angry'):
+            emotion.append('female_angry')
+        elif i.startswith('OAF_disgust') or i.startswith('YAF_disgust'):
+            emotion.append('female_disgust')
+        elif i.startswith('OAF_Fear') or i.startswith('YAF_fear'):
+            emotion.append('female_fear')
+        elif i.startswith('OAF_happy') or i.startswith('YAF_happy'):
+            emotion.append('female_happy')
+        elif i.startswith('OAF_neutral') or i.startswith('YAF_neutral'):
+            emotion.append('female_neutral')
+        elif i.startswith('OAF_Pleasant_surprise') or i.startswith('YAF_pleasant_surprised'):
+            emotion.append('female_surprise')
+        elif i.startswith('OAF_Sad') or i.startswith('YAF_sad'):
+            emotion.append('female_sad')
+        else:
+            emotion.append('Unknown')
+        path.append(os.path.join(TESS, i, f))
+
+TESS_df = pd.DataFrame({'labels': emotion, 'source': 'TESS', 'path': path})
