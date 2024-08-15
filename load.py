@@ -29,3 +29,22 @@ CREMA = os.path.join(data_path, 'CREMA-D')
 dir_list = os.listdir(SAVEE)
 emotion = []
 path = []
+for i in dir_list:
+    if i[-8:-6] == '_a':
+        emotion.append('male_angry')
+    elif i[-8:-6] == '_d':
+        emotion.append('male_disgust')
+    elif i[-8:-6] == '_f':
+        emotion.append('male_fear')
+    elif i[-8:-6] == '_h':
+        emotion.append('male_happy')
+    elif i[-8:-6] == '_n':
+        emotion.append('male_neutral')
+    elif i[-8:-6] == 'sa':
+        emotion.append('male_sad')
+    elif i[-8:-6] == 'su':
+        emotion.append('male_surprise')
+    else:
+        emotion.append('male_error')
+    path.append(os.path.join(SAVEE, i))
+SAVEE_df = pd.DataFrame({'labels': emotion, 'source': 'SAVEE', 'path': path})
