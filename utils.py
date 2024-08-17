@@ -34,3 +34,18 @@ import numpy as np
 
 import sounddevice as sd
 from scipy.io.wavfile import write
+
+def predict(audio_recording):
+
+    train_data = pd.read_csv("./train_features.csv")
+
+    scaler = StandardScaler()
+    scaler.fit(train_data.drop(["label", "name"], axis=1))
+    x_train = scaler.transform(train_data.drop(["label", "name"], axis=1))
+
+    pca = PCA(n_components=75)
+    train_pca = pca.fit_transform(x_train)
+
+    # Recording the audio from user's microphone
+    # sample_rate = 22050  # Sample rate
+    # seconds = 3  # Duration of recording
