@@ -77,3 +77,33 @@ def predict(audio_recording):
     feature_set = np.hstack((feature_set, mel))
     print(mel.shape)
 
+    print(feature_set.shape)
+
+    feature_set = np.reshape(feature_set, (1, -1))
+    print(feature_set.shape)
+
+    feature_set_pca = pca.transform(feature_set)
+    print("After PCA shape:", feature_set_pca.shape)
+
+    feature_set_reshaped = feature_set_pca.reshape(-1, 75, 1)
+    print("Reshaped for model input:", feature_set_reshaped.shape)
+
+    match_array = [
+        "Female Angry",
+        "Female Calm",
+        "Female Disgust",
+        "Female Fearful",
+        "Female Happy",
+        "Female Neutral",
+        "Female Sad",
+        "Female Suprised",
+        "Male Angry",
+        "Male Calm",
+        "Male Disgust",
+        "Male Fearful",
+        "Male Happy",
+        "Male Neutral",
+        "Male Sad",
+        "Male Angry",
+    ]
+
