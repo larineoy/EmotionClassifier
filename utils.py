@@ -49,3 +49,13 @@ def predict(audio_recording):
     # Recording the audio from user's microphone
     # sample_rate = 22050  # Sample rate
     # seconds = 3  # Duration of recording
+
+    # myrecording = sd.rec(int(seconds * sample_rate), samplerate=sample_rate, channels=2)
+    # sd.wait()  # Wait until recording is finished
+    # write('output.wav', fs, myrecording)
+
+    # audio_sample_path = "output.wav"
+    x, sample_rate = librosa.load(audio_recording)
+    print(sample_rate)
+    # feature_set stores all features of the audio file
+    feature_set = np.array([])
