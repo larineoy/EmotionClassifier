@@ -181,3 +181,19 @@ for actor_folder in dir_list:
             continue
 
 CREMA_df = pd.DataFrame({'labels': emotion, 'source': 'CREMA', 'path': path})
+
+print(f"SAVEE DataFrame: {SAVEE_df.shape}")
+print(f"RAVDESS DataFrame: {RAV_df.shape}")
+print(f"TESS DataFrame: {TESS_df.shape}")
+print(f"CREMA DataFrame: {CREMA_df.shape}")
+
+# Combine all dataframes
+df = pd.concat([SAVEE_df, RAV_df, TESS_df, CREMA_df], axis=0)
+
+# Output the label distribution
+print(df.labels.value_counts())
+print(df.head())
+
+# Save the consolidated dataframe to a CSV file
+df.to_csv("Data_path.csv", index=False)
+
