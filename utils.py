@@ -59,3 +59,21 @@ def predict(audio_recording):
     print(sample_rate)
     # feature_set stores all features of the audio file
     feature_set = np.array([])
+
+    # MFCC feature extraction
+    # No. of MFCC Features = 40 (Default = 20)
+    mfccs = np.mean(librosa.feature.mfcc(y=x, sr=sample_rate, n_mfcc=40).T, axis=0)
+    feature_set = np.hstack((feature_set, mfccs))
+    print(mfccs.shape)
+    ## Chroma feature extraction
+    # No. of Chroma Features = 12 (Always)
+    stft = np.abs(librosa.stft(x))
+    chroma = np.mean(librosa.feature.chroma_stft(S=stft, sr=sample_rate).T, axis=0)
+    feature_set = np.hstack((feature_set, chroma))
+    print(chroma.shape)
+    ## Mel feature extraction
+    # No. of Mel Features = 128 (Default = 128)
+    mel = np.mean(librosa.feature.melspectrogram(y=x, sr=sample_rate).T, axis=0)
+    feature_set = np.hstack((feature_set, mel))
+    print(mel.shape)
+
