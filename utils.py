@@ -111,3 +111,5 @@ def predict(audio_recording):
 
     # print(match_array[np.argmax(model.predict(feature_set_reshaped))])
     pred = model.predict(feature_set_reshaped)
+
+    return match_array[np.argsort(pred)[0][-2]]
