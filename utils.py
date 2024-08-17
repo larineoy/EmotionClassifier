@@ -107,3 +107,7 @@ def predict(audio_recording):
         "Male Angry",
     ]
 
+    model = keras.models.load_model("./saved_models/CNN with Feature Array.keras")
+
+    # print(match_array[np.argmax(model.predict(feature_set_reshaped))])
+    pred = model.predict(feature_set_reshaped)
