@@ -107,3 +107,77 @@ model.add(Activation('softmax'))
 opt = keras.optimizers.RMSprop(lr=0.00001, decay=1e-6)
 #model.summary()
 
+model.compile(loss='categorical_crossentropy', optimizer=opt,metrics=['accuracy'])
+model_history=model.fit(X_train, y_train, batch_size=16, epochs=100, validation_data=(X_test, y_test))
+
+# Plot model loss
+plt.plot(model_history.history['loss'])
+plt.plot(model_history.history['val_loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Test'], loc='upper left')
+plt.show()
+
+# Model serialization
+save_dir = os.path.join(os.getcwd(), 'saved_models')
+if not os.path.isdir(save_dir):
+    os.makedirs(save_dir)
+model_path = os.path.join(save_dir, 'Emotion_Model.h5')
+model.save(model_path)
+
+# Save model archetecture to disk
+with open("model_json.json", "w") as json_file:
+    json_file.write(model.to_json())
+
+# Model validation
+json_file = open('model_json.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+
+loaded_model.load_weights("saved_models/Emotion_Model.h5")
+
+opt = keras.optimizers.RMSprop(lr=0.00001, decay=1e-6)
+loaded_model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+score = loaded_model.evaluate(X_test, y_test, verbose=0)
+print(f"{loaded_model.metrics_names[1]}: {score[1] * 100:.2f}%")
+
+# predict and evaluate
+preds = loaded_model.predict(X_test, batch_size=16, verbose=1).argmax(axis=1)
+preds = preds.astype(int).flatten()
+preds = lb.inverse_transform(preds)
+preds = pd.DataFrame({'predictedvalues': lb.inverse_transform(preds)})
+
+# actual labels:
+actual = y_test.argmax(axis=1).astype(int).flatten()
+actual = actual.astype(int).flatten()
+actual = lb.inverse_transform(actual)
+actual = pd.DataFrame({'actualvalues': lb.inverse_transform(actual)})
+
+# combine predictions with actual values
+finaldf = actual.join(preds)
+finaldf.to_csv('Predictions.csv', index=False)
+
+# confusion matrix and classification report
+def print_confusion_matrix(confusion_matrix, class_names, figsize=(10, 7), fontsize=14):
+    df_cm = pd.DataFrame(confusion_matrix, index=class_names, columns=class_names)
+    fig = plt.figure(figsize=figsize)
+    heatmap = sns.heatmap(df_cm, annot=True, fmt="d")
+    heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fontsize)
+    heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=fontsize)
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+finaldf = pd.read_csv("Predictions.csv")
+classes = finaldf.actualvalues.unique()
+classes.sort()
+
+# Confusion matrix
+c = confusion_matrix(finaldf.actualvalues, finaldf.predictedvalues)
+print(accuracy_score(finaldf.actualvalues, finaldf.predictedvalues))
+print_confusion_matrix(c, class_names=classes)
+
+# Classification report
+print(classification_report(finaldf.actualvalues, finaldf.predictedvalues, target_names=classes))
+
