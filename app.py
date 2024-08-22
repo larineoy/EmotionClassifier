@@ -105,3 +105,30 @@ layout = [
 ]
 
 window = sg.Window("AI Audio-Based Emotion Detector", layout, finalize=True)
+
+while True:
+    event, values = window.read()
+
+    if event == sg.WINDOW_CLOSED:
+        break
+
+    if event == "Record":
+        window["-OUTPUT-"].update("")
+        frames, sample_rate = record_audio()
+        audio_file = save_wav(frames, sample_rate)
+
+        # Show progress bar and start processing in a separate thread
+        window["-PROGRESS-"].update(visible=True)
+        threading.Thread(
+            target=process_audio_with_progress, args=(audio_file, window), daemon=True
+        ).start()
+
+    if event == "-FUNCTION-DONE-":
+        window["-PROGRESS-"].update(visible=False)
+        result = values[event]
+        # Animate the text update
+        threading.Thread(
+            target=animate_text, args=(window, "-OUTPUT-", result), daemon=True
+        ).start()
+
+window.close()
