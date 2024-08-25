@@ -133,3 +133,20 @@ plt.ylim([0, 1])
 plt.legend(loc='upper right')
 plt.title('Model Loss')
 plt.show()
+
+# Evaluate the model
+y_pred = model.predict(X_test)
+y_pred_classes = np.argmax(y_pred, axis=1)
+y_true = np.argmax(y_test, axis=1)
+
+# Confusion matrix
+conf_matrix = confusion_matrix(y_true, y_pred_classes)
+plt.figure(figsize=(10, 8))
+sns.heatmap(conf_matrix, annot=True, fmt="d", xticklabels=lb.classes_, yticklabels=lb.classes_)
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix')
+plt.show()
+
+# Classification report
+print(classification_report(y_true, y_pred_classes, target_names=lb.classes_))
