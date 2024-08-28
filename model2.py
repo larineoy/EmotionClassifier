@@ -148,8 +148,5 @@ plt.ylabel('True')
 plt.title('Confusion Matrix')
 plt.show()
 
-
-
-
 # Classification report
 print(classification_report(y_true, y_pred_classes, target_names=lb.classes_))
